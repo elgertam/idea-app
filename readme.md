@@ -1,6 +1,4 @@
-=======================================================================
- pystack
-=======================================================================
+# pystack
 
 To run this project, create a virtualenv with Python 2.7 or Python
 3.3+, activate that virtualenv, then set up your application with these
@@ -24,4 +22,4 @@ Start the development server with:
 
     python manage.py runserver
 
-Based on Ron DuPlain's Sched https://github.com/rduplain/sched
+Based on [Ron DuPlain's Sched](https://github.com/rduplain/sched)

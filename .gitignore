@@ -15,3 +15,5 @@ __MACOSX
 README.html
 *.sqlite
 *.sw*
+env/
+.idea/

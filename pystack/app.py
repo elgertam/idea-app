@@ -6,10 +6,11 @@ from flask import Flask
 from flask import abort, jsonify, redirect, render_template, request, url_for
 from flask.ext.login import LoginManager, current_user
 from flask.ext.login import login_user, login_required, logout_user
+from flask.ext.mail import Mail, Message
 from flask.ext.sqlalchemy import SQLAlchemy
 
 from pystack import config, filters
-from pystack.forms import LoginForm
+from pystack.forms import LoginForm, IdeaForm
 from pystack.models import Base, User
 
 
@@ -26,9 +27,14 @@ db.Model = Base
 
 # Use Flask-Login to track the current user in Flask's session.
 login_manager = LoginManager()
-login_manager.setup_app(app)
+login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to see your appointments.'
+
+
+#Setup Flask-Mail to run
+mail = Mail(app)
+mail.init_app(app)
 
 
 @login_manager.user_loader
@@ -52,6 +58,12 @@ def error_not_found(error):
     """Render a custom template when responding with 404 Not Found."""
     return render_template('error/not_found.html'), 404
 
+@app.route('/idea')
+def captureidea():
+    form = IdeaForm(request.form)
+    error = None
+    # user = ''
+    return render_template('idea/captureidea.html', form=form, error=error)
 
 @app.route('/')
 def index():
@@ -67,7 +79,7 @@ def secure():
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated():
-        return redirect(url_for('appointment_list'))
+        return redirect(url_for('secure'))
     form = LoginForm(request.form)
     error = None
     if request.method == 'POST' and form.validate():
@@ -87,3 +99,10 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
+
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated():
+        msg = Message()
+    return ''
