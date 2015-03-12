@@ -7,14 +7,12 @@ modules are objects, so you can use a .py file as your configuration.
 
 import os
 
-# Get the current working directory to place idea-app.db during development.
-# In production, use absolute paths or a database management system.
-PWD = os.path.abspath(os.curdir)
-
 DEBUG = True
-SQLALCHEMY_DATABASE_URI = 'sqlite:///{}/idea-app.db'.format(PWD)
-SECRET_KEY = 'enydM2ANhdcoKwdVa0jWvEsbPFuQpMjf' # Create your own.
+SQLALCHEMY_DATABASE_URI = 'postgresql://elgertam@localhost/idea'
+SECRET_KEY = 'enydM2ANhdcoKwdVa0jWvEsbPFuQpMjf'  # Create your own.
 SESSION_PROTECTION = 'strong'
+
+BASE_URL = 'http://localhost:5000'
 
 MAIL_SERVER = 'localhost'
 MAIL_PORT = 1025
@@ -23,4 +21,4 @@ MAIL_USE_SSL = False
 MAIL_DEBUG = DEBUG
 MAIL_USERNAME = None
 MAIL_PASSWORD = None
-DEFAULT_MAIL_SENDER = None
+MAIL_DEFAULT_SENDER = 'admin@konkourse.com'

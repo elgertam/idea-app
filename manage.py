@@ -1,7 +1,12 @@
+#!/usr/bin/env python
+from __future__ import print_function
+
+import smtpd
+
 from flask.ext.script import Manager
+from flask.ext.migrate import Migrate, MigrateCommand
 
-from pystack.app import app, db
-
+from idea.app import app, db
 
 # By default, Flask-Script adds the 'runserver' and 'shell' commands to
 # interact with the Flask application. Add additional commands using the
@@ -12,15 +17,19 @@ manager = Manager(app)
 
 
 @manager.command
-def create_tables():
-    "Create relational database tables."
-    db.create_all()
+def email():
+    """Run test email server using project config"""
+    addr = app.config['MAIL_SERVER'], app.config['MAIL_PORT']
+    print('Running email server on {}:{}'.format(*addr))
+    smtp_server = smtpd.DebuggingServer(addr, None)
+    try:
+        smtpd.asyncore.loop()
+    except KeyboardInterrupt:
+        smtp_server.close()
 
-@manager.command
-def drop_tables():
-    "Drop all project relational database tables. THIS DELETES DATA."
-    db.drop_all()
 
+migrate = Migrate(app, db)
+manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
     manager.run()

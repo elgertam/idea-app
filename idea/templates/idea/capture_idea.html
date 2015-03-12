@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock title %}
+{% block main %}
+    <div class="row">
+        <div class="login well offset2 span8">
+            <form method="post" action="{{ url_for('capture_idea') }}" class="form-horizontal">
+                <legend>Capture Idea</legend>
+                {% if error %}<p class="alert alert-error">{{ error }}</p>{% endif %}
+                <div class="control-group{% if form.title.errors %} error{% endif%}">
+                    {{ form.title.label(class="control-label") }}
+                    <div class="controls">
+                        {{ form.title }}
+                        {% for error in form.title.errors %}<span class="help-inline">{{ error }}</span>{% endfor %}
+                    </div>
+                </div>
+                <div class="control-group{% if form.problem.errors %} error{% endif%}">
+                    {{ form.problem.label(class="control-label") }}
+                    <div class="controls">
+                        {{ form.problem }}
+                        {% for error in form.problem.errors %}<span class="help-inline">{{ error }}</span>{% endfor %}
+                    </div>
+                </div>
+                <div class="control-group{% if form.solution.errors %} error{% endif%}">
+                    {{ form.solution.label(class="control-label") }}
+                    <div class="controls">
+                        {{ form.solution }}
+                        {% for error in form.solution.errors %}<span class="help-inline">{{ error }}</span>{% endfor %}
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn">Save Idea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock main %}

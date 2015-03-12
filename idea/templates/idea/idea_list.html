@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock title %}
+
+{% block main %}
+    {% if success %}
+    <div class="row">Yay!</div>
+    {% endif %}
+    <div class="row">
+        <ul>
+            {% for idea in idea_list %}
+                <li> {{ idea.title }} </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="row">
+        <a href="{{ url_for('capture_idea') }}">Add another idea</a>
+    </div>
+{% endblock main %}
