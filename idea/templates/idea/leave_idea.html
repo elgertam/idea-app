@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Leave Idea{% endblock title %}
+
+{% block main %}
+    <div class="col-md-8 col-md-offset-2 login well">
+        <legend>Confirm Departure</legend>
+        <form method="post" class="form-horizontal">
+            <p>Are you sure you want to leave {{ idea.title }}? We're sure {{ idea.owner.name }} ({{ idea.owner.email }}) will be sorry to see you go.</p>
+            <button class="btn btn-default" type="submit">Get me out!</button>
+        </form>
+    </div>
+{% endblock main %}

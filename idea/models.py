@@ -6,11 +6,17 @@ import attr
 from datetime import datetime
 from sqlalchemy import MetaData, Table, Column, Boolean, DateTime, Integer, String, ForeignKey
 from sqlalchemy.orm import synonym, relationship, class_mapper
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from uuid import uuid4
+
+
+class AuditMixin(object):
+    id = Column(Integer, primary_key=True)
+    created = Column(DateTime, default=datetime.now)
+    modified = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 naming_conventions = {
     "ix": 'ix_%(column_0_label)s',
@@ -22,19 +28,17 @@ naming_conventions = {
 metadata = MetaData(naming_convention=naming_conventions)
 Base = declarative_base(metadata=metadata)
 
-members = Table('members', Base.metadata,
-                Column('idea', Integer, ForeignKey('idea.id'), primary_key=True),
-                Column('user', Integer, ForeignKey('user.id'), primary_key=True),
-                )
+_members = Table('members', Base.metadata,
+                 Column('idea', Integer, ForeignKey('idea.id'), primary_key=True),
+                 Column('user', Integer, ForeignKey('user.id'), primary_key=True),
+                 )
 
 
-class Idea(Base):
+class Idea(AuditMixin, Base):
     """Information for a specific Idea"""
     __tablename__ = 'idea'
 
     id = Column(Integer, primary_key=True)
-    created = Column(DateTime, default=datetime.now)
-    modified = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     _forked_from_id = Column('forked_from_id', Integer, ForeignKey('idea.id'))
     _owner_id = Column('owner_id', Integer, ForeignKey('user.id'))
@@ -45,12 +49,10 @@ class Idea(Base):
     archive = Column(Boolean, default=False, nullable=False)
 
     owner = relationship('User')
-    _members = relationship('User', secondary=members)
+    _members = relationship('User', secondary=_members)
     forked_from = relationship('Idea', backref='forks', remote_side=[id])
 
     def fork(self, owner):
-        if owner == self.owner:
-            raise RuntimeError('An owner cannot fork his or her own idea')
         new_idea = Idea(title=self.title,
                         problem=self.problem,
                         solution=self.solution,
@@ -59,19 +61,23 @@ class Idea(Base):
         return new_idea
 
     def join(self, user):
+        if self.owner == user or user in self._members:
+            return self
+        self._members.append(user)
+        return self
+
+    def leave(self, user):
         if self.owner == user:
-            raise RuntimeError('An owner cannot become a member of his or her own idea')
-        if user in self.members:
-            raise RuntimeError('')
+            return self
+        self._members.remove(user)
+        return self
 
 
-class User(Base):
+class User(AuditMixin, Base):
     """A user login, with credentials and authentication."""
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
-    created = Column(DateTime, default=datetime.now)
-    modified = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     name = Column(String(200))
     email = Column(String(100), unique=True, nullable=False)

@@ -13,6 +13,8 @@ def init_app(app):
     # whether to autoescape
     app.jinja_env.filters['nl2br'] = evalcontextfilter(do_nl2br)
 
+    app.jinja_env.filters['pluralize'] = do_pluralize
+
 
 def do_datetime(dt, format=None):
     """Jinja template filter to format a datetime object with date & time."""
@@ -87,3 +89,9 @@ def do_nl2br(context, value):
     if context.autoescape:
         formatted = Markup(formatted)
     return formatted
+
+
+def do_pluralize(num, singular = '', plural = 's'):
+    if num == 1:
+        return singular
+    return plural

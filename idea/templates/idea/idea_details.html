@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome{% endblock title %}
+
+{% block main %}
+  <div class="row">
+    <h2 class="col-md-12">{{ idea.title }}</h2>
+  </div>
+  <div class="row">
+    <h3 class="col-md-12">Owned by</h3>
+  </div>
+  <div class="row">
+    <p class="col-md-10 col-md-offset-1">{{ idea.owner.name }} ({{ idea.owner.email }}) {% if user == idea.owner %}<a href="{{ url_for('edit_idea', id_=idea.id) }}" class="btn btn-primary">Edit Idea</a> {% endif %}<a href="{{ url_for('fork_idea', id_=idea.id) }}" class="btn btn-danger">Fork</a></p>
+  </div>
+  <div class="row">
+    <h3 class="col-md-12">Members</h3>
+  </div>
+  <div class="row">
+    <ul class="list-unstyled col-md-10 col-md-offset-1">
+      {% for member in idea._members %}
+        <li>{{ member.name }} ({{ member.email }}) {% if user == member %}<a href="{{ url_for('leave_idea', id_=idea.id) }}" class="btn btn-danger">Leave Idea</a>{% endif %}</li>
+      {% else %}
+        <li>Looks like there are no members yet. {% if user != idea.owner %}Be the first to <a href="{{ url_for('join_idea', id_=idea.id) }}" class="btn btn-primary">Join</a>!{% endif %}</li>
+      {% endfor %}
+      {% if user not in members and members|length > 0 %}
+        <li><a href="{{ url_for('join_idea', id_=idea.id) }}" class="btn btn-primary">Join</a></li>
+      {% endif %}
+    </ul>
+  </div>
+  <div class="row">
+    <h3 class="col-md-12">Problem</h3>
+  </div>
+  <div class="row">
+    <p class="col-md-10 col-md-offset-1">{{ idea.problem }}</p>
+  </div>
+  <div class="row">
+    <h3 class="col-md-12">Solution</h3>
+    </div>
+  <div class="row">
+    <p class="col-md-10 col-md-offset-1">{{ idea.solution }}</p>
+  </div>
+{% endblock main %}

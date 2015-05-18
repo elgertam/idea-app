@@ -68,9 +68,13 @@ def save(entity):
 @app.route('/')
 def index():
     user = None
+    owned_ideas = 0
+    joined_ideas = 0
     if current_user.is_authenticated():
         user = current_user
-    return render_template('index.html', user=user)
+        owned_ideas = db.session.query(Idea).filter(Idea.owner == user).count()
+        joined_ideas = db.session.query(Idea).filter(Idea._members.contains(user)).count()
+    return render_template('index.html', user=user, owned_ideas=owned_ideas, joined_ideas=joined_ideas)
 
 
 @app.route('/secure/', methods=['GET'])
@@ -191,16 +195,35 @@ def reset(confirm):
         return redirect(url_for('index'))
 
     form = PasswordReset(request.form)
-    user = user_from_confirm(confirm)
+    error = None
 
-    if user is not None and request.method == 'POST' and form.validate():
+    if request.method == 'POST' and form.validate():
+        user = user_from_confirm(confirm)
+        if user is not None:
+            user.active = True
+            user.password = form.password.data.strip()
+            save(user)
+            return redirect(url_for('login'))
+        error = 'We had some trouble finding your account. Please check the verification URL you were sent and try again.'
+
+    return render_template('user/password_reset.html', form=form, error=error)
+
+
+@app.route('/reset/', methods=['GET', 'POST'])
+def reset_password():
+    if not current_user.is_authenticated():
+        return redirect(url_for('request_reset'))
+
+    form = PasswordReset(request.form)
+
+    if request.method == 'POST' and form.validate():
+        user = current_user
         user.active = True
         user.password = form.password.data.strip()
         save(user)
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
 
-    error = 'We had some trouble finding your account. Please check the verification URL you were sent and try again.'
-    return render_template('user/password_reset.html', form=form, error=error)
+    return render_template('user/password_reset.html', form=form, error=None)
 
 
 def prepare_reset_password_email_message(user):
@@ -225,32 +248,99 @@ def request_reset():
         return redirect(url_for('index'))
 
     form = RequestPasswordReset(request.form)
-    user = user_from_email(form.email.data)
+    error = None
 
-    if user is not None and request.method == 'POST' and form.validate():
-        user.confirm = uuid4().get_hex()
-        user.active = False
-        change_and_notify(user, message_factory=prepare_reset_password_email_message)
-        return redirect(url_for('request_reset_received'))
-
-    error = 'We had some trouble finding your account. Please check the verification URL you were sent and try again.'
+    if request.method == 'POST' and form.validate():
+        user = user_from_email(form.email.data)
+        if user is not None:
+            user.confirm = uuid4().get_hex()
+            user.active = False
+            change_and_notify(user, message_factory=prepare_reset_password_email_message)
+            return redirect(url_for('request_reset_received'))
+        error = 'We had some trouble finding your account. Please check the verification URL you were sent and try again.'
     return render_template('user/password_reset_request.html', form=form, error=error)
 
 
 @app.route('/ideas/', methods=['GET', 'POST'])
-def list_ideas():
+def ideas():
     all_ideas = db.session.query(Idea).all()
     return render_template('idea/idea_list.html', idea_list=all_ideas)
 
 
-@app.route('/ideas/new', methods=['GET', 'POST'])
+@app.route('/ideas/new/', methods=['GET', 'POST'])
 @login_required
 def capture_idea():
     form = IdeaForm(request.form)
     error = None
 
     if request.method == 'POST' and form.validate():
-        target_idea = Idea(title=form.title.data, problem=form.problem.data, solution=form.solution.data)
+        target_idea = Idea(owner=current_user)
+        form.populate_obj(target_idea)
         save(target_idea)
-        return redirect(url_for('list_ideas'))
+        return redirect(url_for('ideas'))
     return render_template('idea/capture_idea.html', form=form, error=error)
+
+
+@app.route('/ideas/edit/<id_>/', methods=['GET', 'POST'])
+@login_required
+def edit_idea(id_):
+    target_idea = db.session.query(Idea).get(id_)
+
+    if target_idea.owner != current_user:
+        return redirect(url_for('ideas'))
+
+    if request.method == 'POST':
+        form = IdeaForm(request.form)
+        if form.validate():
+            form.populate_obj(target_idea)
+            save(target_idea)
+            return redirect(url_for('ideas'))
+
+    form = IdeaForm(obj=target_idea)
+    return render_template('idea/capture_idea.html', form=form, error=None)
+
+
+@app.route('/ideas/details/<id_>/', methods=['GET'])
+@login_required
+def idea_details(id_):
+    target_idea = db.session.query(Idea).get(id_)
+    return render_template('idea/idea_details.html', idea=target_idea, user=current_user)
+
+
+@app.route('/ideas/join/<id_>/', methods=['GET', 'POST'])
+@login_required
+def join_idea(id_):
+    target_idea = db.session.query(Idea).get(id_)
+
+    if request.method == 'POST':
+        joined_idea = target_idea.join(current_user)
+        save(joined_idea)
+        return redirect(url_for('idea_details', id_=id_))
+
+    return render_template('idea/join_idea.html', idea=target_idea, error=None)
+
+
+@app.route('/ideas/fork/<id_>/', methods=['GET', 'POST'])
+@login_required
+def fork_idea(id_):
+    target_idea = db.session.query(Idea).get(id_)
+
+    if request.method == 'POST':
+        forked_idea = target_idea.fork(current_user)
+        save(forked_idea)
+        return redirect(url_for('idea_details', id_=forked_idea.id))
+
+    return render_template('idea/fork_idea.html', idea=target_idea, error=None)
+
+
+@app.route('/ideas/leave/<id_>/', methods=['GET', 'POST'])
+@login_required
+def leave_idea(id_):
+    target_idea = db.session.query(Idea).get(id_)
+
+    if request.method == 'POST':
+        left_idea = target_idea.leave(current_user)
+        save(left_idea)
+        return redirect(url_for('idea_details', id_=id_))
+
+    return render_template('idea/leave_idea.html', idea=target_idea, error=None)

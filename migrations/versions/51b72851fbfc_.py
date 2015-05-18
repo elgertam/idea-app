@@ -17,8 +17,8 @@ import sqlalchemy as sa
 
 
 def upgrade():
-    op.alter_column('idea', 'problem_description', new_column_name='problem', nullable=False)
-    op.alter_column('idea', 'solution_description', new_column_name='solution', nullable=False)
+    op.alter_column('idea', 'problem_description', existing_type=sa.String(), new_column_name='problem', nullable=False)
+    op.alter_column('idea', 'solution_description', existing_type=sa.String(), new_column_name='solution', nullable=False)
     op.alter_column('user', 'active', existing_type=sa.Boolean(), nullable=False)
     op.alter_column('user', 'password', existing_type=sa.String(length=100), nullable=False)
 
@@ -26,5 +26,5 @@ def upgrade():
 def downgrade():
     op.alter_column('user', 'password', existing_type=sa.String(length=100), nullable=True)
     op.alter_column('user', 'active', existing_type=sa.Boolean(), nullable=True)
-    op.alter_column('idea', 'problem', new_column_name='problem_description', nullable=True)
-    op.alter_column('idea', 'solution', new_column_name='solution_description', nullable=True)
+    op.alter_column('idea', 'problem', existing_type=sa.String(), new_column_name='problem_description', nullable=True)
+    op.alter_column('idea', 'solution', existing_type=sa.String(), new_column_name='solution_description', nullable=True)

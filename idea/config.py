@@ -21,4 +21,4 @@ MAIL_USE_SSL = False
 MAIL_DEBUG = DEBUG
 MAIL_USERNAME = None
 MAIL_PASSWORD = None
-MAIL_DEFAULT_SENDER = 'admin@konkourse.com'
+MAIL_DEFAULT_SENDER = 'noreply@konkourse.com'

@@ -14,7 +14,6 @@ class LoginForm(Form):
     password = PasswordField('Password', [DataRequired()])
 
 
-
 class IdeaForm(Form):
     title = StringField('Idea Title', [DataRequired()])
     problem = TextAreaField('Problem', [DataRequired()])

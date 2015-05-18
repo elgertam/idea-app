@@ -3,11 +3,97 @@
 {% block title %}Welcome{% endblock title %}
 
 {% block main %}
-<div class="row">
+  <div class="jumbotron">
     {% if user %}
-    <h3 class="span12">{{ user.email }} {{ user.name }}</h3>
+      <h1>Welcome {{ user.name }}.</h1>
+      <p>You own {{ owned_ideas }} <a href="{{ url_for('ideas') }}">idea{{ owned_ideas|pluralize }}</a> and have
+        joined {{ joined_ideas }} other{{ joined_ideas|pluralize }}.</p>
     {% else %}
-    <h3 class="span12">Well login, ya doofus!</h3>
+      <h1>Start submitting ideas today!</h1>
+      <p><a href="{{ url_for('register') }}">Register</a> to get started.</p>
     {% endif %}
-</div>
+  </div>
+  <div class="row med-skip">
+    <div class="media col-md-10 col-md-offset-1">
+      <div class="media-left media-middle">
+        <img src="/static/img/lightbulb.png" alt="A light bulb goes off." width="144" height="144"
+             alt="A lightbulb goes off." class="media-object"/>
+      </div>
+      <div class="media-body">
+        <h2 class="media-header">Collect
+          <small>Your Idea</small>
+        </h2>
+        <p>You're working one day, and you get an idea for how to make the world a better place. Don't let that
+          light bulb moment go to waste!</p>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aperiam atque et ex excepturi incidunt. Ad
+          assumenda
+          commodi cupiditate, dignissimos dolor doloribus iure neque odit officiis, possimus recusandae sed tempora
+          temporibus!</p>
+
+        <p>Accusantium adipisci delectus deserunt dolorem et ipsam iste itaque iusto labore nemo numquam, officiis quae
+          qui quisquam repellendus, sunt, voluptate voluptatum. Cumque excepturi, facilis illo odit saepe sit sunt
+          ut!</p>
+
+        <p>Aliquam commodi consequuntur corporis culpa debitis ea eaque earum eligendi, enim fugiat illum labore
+          laboriosam modi nam nemo placeat quasi quibusdam quod ratione saepe similique soluta tempore veniam voluptate
+          voluptatem.</p>
+      </div>
+    </div>
+  </div>
+  <div class="row med-skip">
+    <div class="media col-md-10 col-md-offset-1">
+      <div class="media-left media-middle">
+        <img src="/static/img/post-idea.png" alt="Posting an idea." width="144" height="144" class="media-object"/>
+      </div>
+      <div class="media-body">
+        <h2 class="media-header">Share
+          <small>Your Idea</small>
+        </h2>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad deleniti hic iste suscipit totam vel. Ad aperiam
+          cum eius eligendi libero neque nihil, omnis optio perferendis quae quos sint soluta?</p>
+
+        <p>Adipisci alias consequatur cumque, in inventore odit officiis omnis recusandae repudiandae sunt. Autem cumque
+          eos error est exercitationem explicabo minima modi necessitatibus possimus quaerat quidem ratione, sequi
+          similique tempora tempore?</p>
+
+        <p>Consectetur dolorem eaque id illo suscipit. Ab ad adipisci atque blanditiis commodi dolore ea est, eum fugit
+          ipsa laborum, neque odio, quam quibusdam quis recusandae vitae voluptatibus? Consequuntur, pariatur sint?</p>
+
+        <p>Ab debitis earum esse explicabo illo impedit inventore modi odio, quos vero? Ab aliquam beatae ducimus hic id
+          laborum nihil odio pariatur quaerat, voluptatum? Impedit iste necessitatibus quo quod veniam!</p>
+      </div>
+    </div>
+  </div>
+  <div class="row med-skip">
+    <div class="media col-md-10 col-md-offset-1">
+      <div class="media-left media-middle">
+        <img src="/static/img/computer.png" alt="Starting a project." width="144" height="144" class="media-object"/>
+      </div>
+      <div class="media-body">
+        <h2 class="media-heading">Build
+          <small>Your Idea</small>
+        </h2>
+
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad aspernatur consequatur corporis eos et fuga
+          inventore iusto maxime mollitia, necessitatibus nulla omnis quaerat quis ratione sit? Odio recusandae
+          similique
+          vel?</p>
+
+        <p>Ad asperiores assumenda deleniti dignissimos doloribus, ducimus ea eius exercitationem facere in itaque
+          pariatur quibusdam recusandae sed totam vel veniam voluptatum. At culpa fugiat maiores molestias odit,
+          praesentium quas vero!</p>
+
+        <p>A ab accusamus ad cumque deleniti, dignissimos facilis fuga illum incidunt iure non odio placeat recusandae
+          rem
+          saepe, sint sit voluptas. Aliquid consectetur corporis cupiditate magni maxime, minus perspiciatis
+          praesentium.</p>
+
+        <p>Cumque maiores quis reprehenderit voluptates. Accusamus aliquam architecto atque aut consequatur consequuntur
+          cum cumque debitis distinctio dolores facere illum magnam, minima numquam recusandae rerum voluptatibus? Autem
+          incidunt laboriosam vero voluptatem?</p>
+      </div>
+    </div>
+  </div>
 {% endblock main %}

@@ -18,9 +18,13 @@ import sqlalchemy as sa
 
 def upgrade():
     op.add_column('idea', sa.Column('archive', sa.Boolean(), nullable=False, server_default='FALSE'))
+    op.alter_column('members', 'idea', existing_type=sa.Integer(), nullable=False)
+    op.alter_column('members', 'user', existing_type=sa.Integer(), nullable=False)
     op.create_primary_key('pk_members', 'members', ['idea', 'user'])
 
 
 def downgrade():
     op.drop_column('idea', 'archive')
+    op.alter_column('members', 'idea', existing_type=sa.Integer(), nullable=True)
+    op.alter_column('members', 'user', existing_type=sa.Integer(), nullable=True)
     op.drop_constraint('pk_members', 'members', type_='primary')

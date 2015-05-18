@@ -1,0 +1,3 @@
+http://www.lfd.uci.edu/~gohlke/pythonlibs/48dkx8tj/psycopg2-2.5.5-cp27-none-win32.whl
+pymssql==2.1.1
+-r requirements.txt

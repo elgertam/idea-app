@@ -1,57 +1,60 @@
 <!DOCTYPE html>
-<!--suppress CssUnusedSymbol -->
 <html lang="en">
-  <head>
-    <title>{% block title %}{% endblock title %}</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon" />
-    <link href="http://netdna.bootstrapcdn.com/bootswatch/2.3.2/united/bootstrap.min.css" rel="stylesheet">
-    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css" rel="stylesheet">
-    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-    <style>
-      .content {
-        margin-top: 60px;
-      }
+<head>
+  <title>{% block title %}{% endblock title %}</title>
+  <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-      .inline-pad {
-        padding-left: 10px;
-      }
-
-      .edit-controls {
-        margin: 1em 0;
-      }
-    </style>
-    {% block extra_head %}{% endblock extra_head %}
-  </head>
-  <body>
-    <div id="main">
-      <div class="utility-nav navbar navbar-fixed-top">
-        <div class="navbar-inner">
-          <div class="container">
-            <a href="{{ url_for('index') }}" class="brand">Ideas</a>
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css"
+        href="//fonts.googleapis.com/css?family=Poppins:300,400|Martel+Sans:200,300|Gruppo">
+  {#    <link rel="stylesheet" href="/static/css/idea-theme.css" type="text/css"/>#}
+  <link rel="stylesheet" href="/static/css/theme.min.css" type="text/css"/>
+  <link rel="stylesheet" href="/static/css/app.css" type="text/css"/>
+  {# <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"> #}
+  <script src="//code.jquery.com/jquery-2.1.4.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  {% block extra_head %}{% endblock extra_head %}
+</head>
+<body>
+<header class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header"><a href="{{ url_for('index') }}" class="navbar-brand">Konkourse</a></div>
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-left">
+        <li><a href="{{ url_for('ideas') }}">Ideas</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+             aria-expanded="false">
+            {% if current_user.is_authenticated() %}{{ current_user.email }}{% else %}Join Us!{% endif %}
+            <span class="caret"></span></a>
+          <ul class="dropdown-menu">
             {% if current_user.is_authenticated() %}
-            <ul class="nav">
-            </ul>
-            <ul class="nav pull-right">
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ current_user.email }} <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                </ul>
-              </li>
-            </ul>
+              <li><a href="{{ url_for('logout') }}">Logout</a></li>
+              <li><a href="{{ url_for('reset_password') }}">Reset Password</a></li>
             {% else %}
-            <ul class="nav pull-right">
               <li><a href="{{ url_for('login') }}">Log In</a></li>
               <li><a href="{{ url_for('register') }}">Register</a></li>
-            </ul>
             {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="content container">
-        {% block main %}{% endblock main %}
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+<div class="content container">
+  {% block main %}{% endblock main %}
+</div>
+<footer class="text-center">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1 text-center">
+        hello | world
       </div>
     </div>
-  </body>
+  </div>
+</footer>
+</body>
 </html>
