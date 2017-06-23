@@ -8,6 +8,5 @@ image: python:2.7.13
 pipelines:
   default:
     - step:
-        script: # Modify the commands below to build your repository.
-          - pip install -r requirements.txt
-          - pip install psycopg2
+        script:
+          - git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD
