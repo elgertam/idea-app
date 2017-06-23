@@ -17,7 +17,7 @@ SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', default_db_uri)
 SECRET_KEY = os.getenv('SECRET_KEY', 'enydM2ANhdcoKwdVa0jWvEsbPFuQpMjf')  # Create your own.
 SESSION_PROTECTION = 'strong'
 
-BASE_URL = 'http://localhost:5000'
+BASE_URL = os.getenv('BASE_URL', 'http://localhost:5000')
 
 MAIL_SERVER = os.getenv('MAIL_SERVER', 'localhost')
 MAIL_PORT = os.getenv('MAIL_PORT', 1025)
